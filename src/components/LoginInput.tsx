@@ -1,4 +1,5 @@
 import React from "react";
+import { useApp } from "../context/AppContext";
 
 interface LoginInputProps {
     email: string;
@@ -17,13 +18,15 @@ const LoginInput: React.FC<LoginInputProps> = ({
     isLoading = false,
     error
 }) => {
+    const { t } = useApp();
+
     return (
         <form
             onSubmit={onSubmit}
             className=" dark:bg-gray-800 rounded-lg p-6 w-full max-w-sm space-y-4"
         >
             <h2 className="text-2xl font-semibold text-center text-gray-900 dark:text-white">
-                Login
+                {t('auth.login')}
             </h2>
 
             {/* Error message display */}
@@ -39,7 +42,7 @@ const LoginInput: React.FC<LoginInputProps> = ({
                         htmlFor="email"
                         className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                     >
-                        Email Address
+                        {t('auth.email')}
                     </label>
                     <input
                         id="email"
@@ -47,7 +50,7 @@ const LoginInput: React.FC<LoginInputProps> = ({
                         name="email"
                         value={email}
                         onChange={onChange}
-                        placeholder="Enter your email"
+                        placeholder={t('auth.emailPlaceholder')}
                         required
                         disabled={isLoading}
                         className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md 
@@ -63,7 +66,7 @@ const LoginInput: React.FC<LoginInputProps> = ({
                         htmlFor="password"
                         className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                     >
-                        Password
+                        {t('auth.password')}
                     </label>
                     <input
                         id="password"
@@ -71,7 +74,7 @@ const LoginInput: React.FC<LoginInputProps> = ({
                         name="password"
                         value={password}
                         onChange={onChange}
-                        placeholder="Enter your password"
+                        placeholder={t('auth.passwordPlaceholder')}
                         required
                         disabled={isLoading}
                         className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md 
@@ -115,10 +118,10 @@ const LoginInput: React.FC<LoginInputProps> = ({
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                             />
                         </svg>
-                        <span>Signing in...</span>
+                        <span>{t('auth.loginLoading')}</span>
                     </div>
                 ) : (
-                    'Sign In'
+                    t('auth.login')
                 )}
             </button>
         </form>

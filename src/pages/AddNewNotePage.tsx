@@ -4,6 +4,7 @@ import { addNote } from "../utils/network-data";
 import type { NotePayload } from "../utils/network-data";
 import type { Note } from "../utils/NoteType";
 import NoteAddForm from "../components/NoteAddForm";
+import { useApp } from "../context/AppContext";
 
 type AddNewNotePageProps = {
     onNoteAdded?: (note: Note) => void;
@@ -12,6 +13,7 @@ type AddNewNotePageProps = {
 const AddNewNotePage: React.FC<AddNewNotePageProps> = ({ onNoteAdded }) => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+    const { t } = useApp();
 
     const handleAddNote = async (notePayload: NotePayload) => {
         setIsLoading(true);
@@ -39,27 +41,16 @@ const AddNewNotePage: React.FC<AddNewNotePageProps> = ({ onNoteAdded }) => {
         }
     };
 
-    const handleGoBack = () => {
-        navigate(-1);
-    };
-
     return (
         <div className="container mx-auto p-4 max-w-2xl">
             <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                        Tambah Catatan Baru
+                        {t('notes.addNote')}
                     </h1>
-                    <button
-                        onClick={handleGoBack}
-                        className="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
-                        disabled={isLoading}
-                    >
-                        Kembali
-                    </button>
                 </div>
                 <p className="text-gray-600 dark:text-gray-400">
-                    Buat catatan baru untuk menyimpan ide, pemikiran, atau informasi penting Anda.
+                    {t('notes.addNoteDescription')}
                 </p>
             </div>
 

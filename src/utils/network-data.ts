@@ -221,7 +221,7 @@ async function getUserLogged(): Promise<ApiResult<User>> {
 
 async function addNote(payload: NotePayload): Promise<ApiResult<Note>> {
     try {
-        console.log('Adding note:', payload);
+        console.log('Adding note with original payload:', payload);
 
         // Validate payload
         if (!payload.title || !payload.body) {
@@ -238,9 +238,17 @@ async function addNote(payload: NotePayload): Promise<ApiResult<Note>> {
             };
         }
 
+        // PERBAIKAN: Pastikan hanya mengirim field yang diizinkan
+        const cleanPayload: NotePayload = {
+            title: payload.title.trim(),
+            body: payload.body.trim()
+        };
+
+        console.log('Sending clean payload:', cleanPayload);
+
         const response = await fetchWithToken(`${BASE_URL}/notes`, {
             method: 'POST',
-            body: JSON.stringify(payload),
+            body: JSON.stringify(cleanPayload), // Gunakan cleanPayload
         });
 
         return await handleApiResponse<Note>(response);

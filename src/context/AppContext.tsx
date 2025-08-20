@@ -24,10 +24,15 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
         'auth.welcome': 'Selamat Datang di Aplikasi Catatan',
         'auth.subtitle': 'Silakan masuk atau daftar untuk melanjutkan',
         'auth.login': 'Masuk',
+        'auth.loginLoading': 'Sedang masuk...',
+        'auth.noAccount': 'Belum punya akun?',
         'auth.register': 'Daftar',
         'auth.email': 'Email',
+        'auth.emailPlaceholder': 'Masukkan alamat email Anda',
         'auth.password': 'Kata Sandi',
+        'auth.passwordPlaceholder': 'Masukkan kata sandi Anda',
         'auth.name': 'Nama',
+        'auth.namePlaceholder': 'Masukkan nama Anda',
         'auth.confirmPassword': 'Konfirmasi Kata Sandi',
         'auth.loginButton': 'Masuk',
         'auth.registerButton': 'Daftar',
@@ -46,8 +51,8 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
         'notes.title': 'Catatan Pribadi',
         'notes.searchPlaceholder': 'Cari catatan...',
         'notes.noNotes': 'Tidak ada catatan',
-        'notes.noNotesDesc': 'Belum ada catatan yang dibuat. Mulai dengan menambahkan catatan pertama Anda!',
         'notes.addNote': 'Tambah Catatan Baru',
+        'notes.addNoteDescription': 'Buat catatan baru untuk menyimpan ide, pemikiran, atau informasi penting Anda.',
         'notes.noteTitle': 'Judul Catatan',
         'notes.noteBody': 'Isi Catatan',
         'notes.save': 'Simpan',
@@ -58,6 +63,7 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
         'notes.back': 'Kembali',
         'notes.archivedNotes': 'Catatan Terarsip',
         'notes.activeNotes': 'Catatan Aktif',
+        'notes.noNotesFound': 'Tidak ada catatan yang ditemukan',
 
         // Add Note Page
         'addNote.title': 'Tambah Catatan Baru',
@@ -98,10 +104,15 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
         'auth.welcome': 'Welcome to the Note App',
         'auth.subtitle': 'Please log in or register to continue',
         'auth.login': 'Login',
+        'auth.loginLoading': 'Logging in...',
+        'auth.noAccount': 'Don\'t have an account?',
         'auth.register': 'Register',
         'auth.email': 'Email',
+        'auth.emailPlaceholder': 'Enter your email address',
         'auth.password': 'Password',
+        'auth.passwordPlaceholder': 'Enter your password',
         'auth.name': 'Name',
+        'auth.namePlaceholder': 'Enter your name',
         'auth.confirmPassword': 'Confirm Password',
         'auth.loginButton': 'Login',
         'auth.registerButton': 'Register',
@@ -120,8 +131,8 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
         'notes.title': "Personal Notes",
         'notes.searchPlaceholder': "Search notes...",
         'notes.noNotes': "No notes",
-        'notes.noNotesDesc': "You haven't created any notes yet. Start by adding your first note!",
         'notes.addNote': "Add New Note",
+        'notes.addNoteDescription': "Create a new note to save your ideas, thoughts, or important information.",
         'notes.noteTitle': "Note Title",
         'notes.noteBody': "Note Body",
         'notes.save': "Save",
@@ -132,6 +143,7 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
         'notes.back': "Back",
         'notes.archivedNotes': "Archived Notes",
         'notes.activeNotes': "Active Notes",
+        'notes.noNotesFound': "No notes found",
 
         // Add Note Page
         'addNote.title': "Add New Note",
@@ -139,6 +151,27 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
             "Create a new note to save your ideas, thoughts, or important information.",
         'addNote.titlePlaceholder': "Enter note title...",
         'addNote.bodyPlaceholder': "Write the note content here...",
+        'addNote.success': 'Note added successfully!',
+        'addNote.failed': 'Failed to add note. Please try again.',
+
+        // Messages
+        'message.loading': 'Loading...',
+        'message.checkingAuth': 'Checking authentication...',
+        'message.somethingWrong': 'Something went wrong. Please try again.',
+        'message.noteDeleted': 'Note deleted successfully',
+        'message.noteArchived': 'Note archived successfully',
+        'message.noteUnarchived': 'Note unarchived successfully',
+
+        // Buttons
+        'button.goBack': 'Back',
+        'button.backToHome': 'Back to Home',
+        'button.tryAgain': 'Try Again',
+
+        // Errors
+        'error.noteNotFound': 'Note not found',
+        'error.invalidNoteId': 'Invalid note ID',
+        'error.loadNote': 'Failed to load note',
+        'error.pageNotFound': 'Page not found',
     }
 }
 
@@ -156,9 +189,33 @@ interface AppProviderProps {
     children: React.ReactNode;
 }
 
+const getStoredTheme = (): themeType => {
+    try {
+        const stored = localStorage.getItem("theme");
+        if (stored === "light" || stored === "dark") {
+            return stored;
+        }
+    } catch (error) {
+        console.warn("Failed to read theme from localStorage:", error);
+    }
+    return "light";
+};
+
+const getStoredLanguage = (): LanguageType => {
+    try {
+        const stored = localStorage.getItem("language");
+        if (stored === "en" || stored === "id") {
+            return stored;
+        }
+    } catch (error) {
+        console.warn("Failed to read language from localStorage:", error);
+    }
+    return "en";
+};
+
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-    const [theme, setTheme] = React.useState<themeType>("light");
-    const [language, setLanguage] = React.useState<LanguageType>("en");
+    const [theme, setTheme] = React.useState<themeType>(getStoredTheme);
+    const [language, setLanguage] = React.useState<LanguageType>(getStoredLanguage);
 
     useEffect(() => {
         const root = document.documentElement;
@@ -166,14 +223,23 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
         if (theme === "dark") {
             root.classList.add("dark");
-        }
-        else {
+        } else {
             root.classList.add("light");
+        }
+
+        try {
+            localStorage.setItem("theme", theme);
+        } catch (error) {
+            console.warn("Failed to save theme to localStorage:", error);
         }
     }, [theme]);
 
     useEffect(() => {
-        localStorage.setItem("language", language);
+        try {
+            localStorage.setItem("language", language);
+        } catch (error) {
+            console.warn("Failed to save language to localStorage:", error);
+        }
     }, [language]);
 
     const toggleTheme = () => {
@@ -189,7 +255,13 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     };
 
     return (
-        <AppContext.Provider value={{ theme, language, setTheme: toggleTheme, setLanguage: toggleLanguage, t }}>
+        <AppContext.Provider value={{
+            theme,
+            language,
+            setTheme: toggleTheme,
+            setLanguage: toggleLanguage,
+            t
+        }}>
             {children}
         </AppContext.Provider>
     );

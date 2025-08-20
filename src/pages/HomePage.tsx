@@ -4,6 +4,7 @@ import NoteList from "../components/NoteList";
 import { Link, useSearchParams } from "react-router-dom";
 import { FaPlus, FaArchive } from "react-icons/fa";
 import SearchBar from "../components/SearchBar";
+import { useApp } from "../context/AppContext";
 
 type HomePageProps = {
     notes: Note[];
@@ -19,6 +20,7 @@ const HomePage: React.FC<HomePageProps> = ({
     onUnarchiveNote,
     onDeleteNote,
 }) => {
+    const { t } = useApp();
 
     const [searchParams] = useSearchParams();
     const keyword = searchParams.get('keyword') || '';
@@ -36,14 +38,14 @@ const HomePage: React.FC<HomePageProps> = ({
                     className="flex items-center space-x-2 px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded"
                 >
                     <FaPlus />
-                    <span className="hidden sm:inline">Tambah</span>
+                    <span className="hidden sm:inline">{t('notes.addNote')}</span>
                 </Link>
                 <Link
                     to="/archived"
                     className="flex items-center space-x-2 px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded"
                 >
                     <FaArchive />
-                    <span className="hidden sm:inline">Arsip</span>
+                    <span className="hidden sm:inline">{t('notes.archive')}</span>
                 </Link>
             </div>
             <SearchBar />
@@ -56,7 +58,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 />
             ) : (
                 <p className="text-center text-gray-500 dark:text-gray-400 mt-8">
-                    Tidak ada catatan.
+                    {t('notes.noNotesFound')}
                 </p>
             )}
         </div>

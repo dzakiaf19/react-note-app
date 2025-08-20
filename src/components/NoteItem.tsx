@@ -17,9 +17,7 @@ type NoteItemProps = {
 
 const NoteItem: React.FC<NoteItemProps> = ({ note, onArchive, onDelete, onUnarchive, disableLink = false, showDelete = false }) => {
     const handleDelete = () => onDelete(note.id);
-
     const handleArchive = () => onArchive?.(note.id);
-
     const handleUnarchive = () => onUnarchive?.(note.id);
 
     return (

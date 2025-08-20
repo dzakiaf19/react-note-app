@@ -20,7 +20,6 @@ const ArchivedPage: React.FC<ArchivedPageProps> = ({
     const keyword = searchParams.get('keyword') || '';
 
     const archivedNotes = notes
-        .filter(note => note.archived)
         .filter(note =>
             note.title.toLowerCase().includes(keyword.toLowerCase()) ||
             note.body.toLowerCase().includes(keyword.toLowerCase())

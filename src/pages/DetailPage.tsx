@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getNote } from "../utils/network-data";
-import NoteItem from "../components/NoteItem";
 import type { Note } from "../utils/NoteType";
 import BreadCrumb from "../components/BreadCrumb";
+import { useApp } from "../context/AppContext";
 
 type DetailPageProps = {
     onArchive: (id: string) => void;
@@ -18,6 +18,7 @@ const DetailPage: React.FC<DetailPageProps> = ({ onArchive, onDelete, onUnarchiv
     const [note, setNote] = useState<Note | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const { t } = useApp();
 
     useEffect(() => {
         const fetchNote = async () => {
@@ -82,7 +83,7 @@ const DetailPage: React.FC<DetailPageProps> = ({ onArchive, onDelete, onUnarchiv
             <div className="container mx-auto p-4">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <div className="text-gray-600 dark:text-gray-300">Loading note...</div>
+                    <div className="text-gray-600 dark:text-gray-300">{t('message.loading')}</div>
                 </div>
             </div>
         );
@@ -100,13 +101,13 @@ const DetailPage: React.FC<DetailPageProps> = ({ onArchive, onDelete, onUnarchiv
                             onClick={handleNavigateBack}
                             className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
                         >
-                            Go Back
+                            {t('button.goBack')}
                         </button>
                         <button
                             onClick={() => navigate('/')}
                             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                         >
-                            Back to Home
+                            {t('button.backToHome')}
                         </button>
                     </div>
                 </div>
@@ -117,14 +118,49 @@ const DetailPage: React.FC<DetailPageProps> = ({ onArchive, onDelete, onUnarchiv
     return (
         <div className="container mx-auto p-4">
             <BreadCrumb title={note.title} isArchived={note.archived} />
-            <NoteItem
-                note={note}
-                onArchive={handleArchive}
-                onDelete={handleDelete}
-                onUnarchive={handleUnarchive}
-                disableLink={true}
-                showDelete={true}
-            />
+            <div className="bg-white dark:bg-gray-800 p-6 rounded shadow-md">
+                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">{note.title}</h2>
+                <p className="text-gray-700 dark:text-gray-300 mb-4">{note.body}</p>
+                <div className="flex justify-between space-x-2">
+                    <div className="flex space-x-2">
+                        <button
+                            onClick={handleNavigateBack}
+                            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                        >
+                            {t('button.goBack')}
+                        </button>
+                        <button
+                            onClick={() => navigate('/')}
+                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                        >
+                            {t('button.backToHome')}
+                        </button>
+                    </div>
+                    <div className="flex space-x-2">
+                        {note.archived === true ? (
+                            <button
+                                onClick={handleUnarchive}
+                                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                            >
+                                {t('notes.unarchive')}
+                            </button>
+                        ) : (
+                            <button
+                                onClick={handleArchive}
+                                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            >
+                                {t('notes.archive')}
+                            </button>
+                        )}
+                        <button
+                            onClick={handleDelete}
+                            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                        >
+                            {t('notes.delete')}
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

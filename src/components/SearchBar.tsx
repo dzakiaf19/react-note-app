@@ -1,5 +1,6 @@
 import React from "react";
 import { useSearchParams } from "react-router-dom";
+import { useApp } from "../context/AppContext";
 
 const SearchBar: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -8,6 +9,7 @@ const SearchBar: React.FC = () => {
         const newKeyword = event.target.value;
         setSearchParams({ keyword: newKeyword });
     };
+    const { t } = useApp();
 
     return (
         <div className="mb-4">
@@ -15,7 +17,7 @@ const SearchBar: React.FC = () => {
                 type="text"
                 value={searchKeyword}
                 onChange={handleKeywordChange}
-                placeholder="Cari catatan..."
+                placeholder={t('notes.searchPlaceholder')}
                 className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
         </div>

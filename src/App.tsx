@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
-import { getUserLogged, getAccessToken, getActiveNotes, deleteNote, archiveNote, unarchiveNote } from './utils/network-data';
+import { getUserLogged, getAccessToken, getActiveNotes, getArchivedNotes, deleteNote, archiveNote, unarchiveNote, addNote, type NotePayload } from './utils/network-data';
+import { useApp } from './context/AppContext';
 import type { Note } from './utils/NoteType';
 import NoteHeader from './components/NoteHeader';
 import HomePage from './pages/HomePage';
@@ -18,21 +19,24 @@ interface User {
 }
 
 const AuthenticatedApp: React.FC<{
-  notes: Note[];
+  allNotes: Note[];
   user: User | null;
   onDeleteNote: (id: string) => void;
   onArchiveNote: (id: string) => void;
   onUnarchiveNote: (id: string) => void;
-  onAddNewNote: (note: Note) => void;
+  onAddNewNote: (note: NotePayload) => void;
   handleLogout: () => void;
-}> = ({ notes, user, onDeleteNote, onArchiveNote, onUnarchiveNote, handleLogout, onAddNewNote }) => {
+}> = ({ allNotes, user, onDeleteNote, onArchiveNote, onUnarchiveNote, handleLogout, onAddNewNote }) => {
+  const activeNotes = allNotes.filter(note => !note.archived);
+  const archivedNotes = allNotes.filter(note => note.archived);
+
   return (
     <>
-      <NoteHeader user={user} onLogout={handleLogout} />
+      <NoteHeader user={user} onLogout={handleLogout} isAuthenticated={true} />
       <Routes>
         <Route path="/" element={
           <HomePage
-            notes={notes}
+            notes={activeNotes}
             onSearchChange={(query) => console.log(`Search query: ${query}`)}
             onArchiveNote={onArchiveNote}
             onUnarchiveNote={onUnarchiveNote}
@@ -47,7 +51,7 @@ const AuthenticatedApp: React.FC<{
         <Route path="/notes/new" element={<AddNewNotePage
           onNoteAdded={onAddNewNote}
         />} />
-        <Route path="/archived" element={<ArchivedPage notes={notes} onUnarchiveNote={onUnarchiveNote} onDeleteNote={onDeleteNote} />} />
+        <Route path="/archived" element={<ArchivedPage notes={archivedNotes} onUnarchiveNote={onUnarchiveNote} onDeleteNote={onDeleteNote} />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
@@ -57,28 +61,35 @@ const AuthenticatedApp: React.FC<{
 const UnauthenticatedApp: React.FC<{
   onLoginSuccess: (accessToken: string) => void;
 }> = ({ onLoginSuccess }) => {
+  const { t } = useApp();
+
   return (
-    <div className="notes-app p-6 bg-gray-100 dark:bg-gray-900 min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-xl bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
-        <main>
-          <h1 className="text-center text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-            Selamat Datang di Aplikasi Catatan
-          </h1>
-          <p className="text-center mb-4 text-gray-600 dark:text-gray-300">
-            Silakan masuk atau daftar untuk melanjutkan
-          </p>
-          <Routes>
-            <Route path="/*" element={<LoginPage onLogin={onLoginSuccess} />} />
-            <Route path="/register" element={<RegisterPage />} />
-          </Routes>
-        </main>
+    <>
+      <NoteHeader user={null} onLogout={() => { }} isAuthenticated={false} />
+
+      <div className="notes-app p-6 bg-gray-100 dark:bg-gray-900 min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-xl bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+          <main>
+            <h1 className="text-center text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+              {t('auth.welcome')}
+            </h1>
+            <p className="text-center mb-4 text-gray-600 dark:text-gray-300">
+              {t('auth.subtitle')}
+            </p>
+            <Routes>
+              <Route path="/*" element={<LoginPage onLogin={onLoginSuccess} />} />
+              <Route path="/register" element={<RegisterPage />} />
+            </Routes>
+          </main>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
 const App: React.FC = () => {
-  const [notes, setNotes] = useState<Note[]>([]);
+  const { t } = useApp();
+  const [allNotes, setAllNotes] = useState<Note[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -89,23 +100,42 @@ const App: React.FC = () => {
     localStorage.removeItem('accessToken');
     setIsAuthenticated(false);
     setUser(null);
-    setNotes([]);
+    setAllNotes([]);
     navigate('/login');
   };
 
-  const fetchNotes = React.useCallback(async () => {
+  const fetchAllNotes = React.useCallback(async () => {
     if (!isAuthenticated) return;
 
     try {
-      const { data, error } = await getActiveNotes();
-      if (error) {
-        console.error("Failed to fetch notes:", error);
-        return;
+      console.log("Fetching all notes...");
+
+      const [activeResponse, archivedResponse] = await Promise.all([
+        getActiveNotes(),
+        getArchivedNotes()
+      ]);
+
+      const activeNotes = activeResponse.data || [];
+      const archivedNotes = archivedResponse.data || [];
+
+      if (activeResponse.error) {
+        console.error("Failed to fetch active notes:", activeResponse.error);
       }
-      console.log("Notes fetched successfully:", data);
-      setNotes(data || []);
+      if (archivedResponse.error) {
+        console.error("Failed to fetch archived notes:", archivedResponse.error);
+      }
+
+      const combinedNotes = [...activeNotes, ...archivedNotes];
+
+      console.log("All notes fetched successfully:", {
+        active: activeNotes.length,
+        archived: archivedNotes.length,
+        total: combinedNotes.length
+      });
+
+      setAllNotes(combinedNotes);
     } catch (err) {
-      console.error("Error fetching notes:", err);
+      console.error("Error fetching all notes:", err);
     }
   }, [isAuthenticated]);
 
@@ -144,20 +174,19 @@ const App: React.FC = () => {
     }
   };
 
-  const handleDeleteNote = (id: string) => {
-    deleteNote(id)
-      .then(({ error }) => {
-        if (error) {
-          console.error("Failed to delete note:", error);
-        } else {
-          setNotes(prevNotes => prevNotes.filter(note => note.id !== id));
-          console.log("Note deleted successfully");
-        }
-      })
-      .catch(err => {
-        console.error("Error deleting note:", err);
+  const handleDeleteNote = async (id: string) => {
+    try {
+      const { error } = await deleteNote(id);
+      if (error) {
+        console.error("Failed to delete note:", error);
+        return;
       }
-      );
+
+      setAllNotes(prevNotes => prevNotes.filter(note => note.id !== id));
+      console.log("Note deleted successfully");
+    } catch (err) {
+      console.error("Error deleting note:", err);
+    }
   };
 
   const handleArchiveNote = async (id: string) => {
@@ -165,34 +194,63 @@ const App: React.FC = () => {
       const { error } = await archiveNote(id);
       if (error) {
         console.error("Failed to archive note:", error);
-      } else {
-        setNotes(prevNotes => prevNotes.map(note =>
-          note.id === id ? { ...note, archived: true } : note
-        ));
-        console.log("Note archived successfully");
+        return;
       }
+
+      setAllNotes(prevNotes =>
+        prevNotes.map(note =>
+          note.id === id ? { ...note, archived: true } : note
+        )
+      );
+      console.log("Note archived successfully");
     } catch (err) {
       console.error("Error archiving note:", err);
     }
   };
-
-  const handleAddNewNote = async (note: Note) => {
-    setNotes(prevNotes => [...prevNotes, note]);
-  }
 
   const handleUnarchiveNote = async (id: string) => {
     try {
       const { error } = await unarchiveNote(id);
       if (error) {
         console.error("Failed to unarchive note:", error);
-      } else {
-        setNotes(prevNotes => prevNotes.map(note =>
-          note.id === id ? { ...note, archived: false } : note
-        ));
-        console.log("Note unarchived successfully");
+        return;
       }
+
+      setAllNotes(prevNotes =>
+        prevNotes.map(note =>
+          note.id === id ? { ...note, archived: false } : note
+        )
+      );
+      console.log("Note unarchived successfully");
     } catch (err) {
       console.error("Error unarchiving note:", err);
+    }
+  };
+
+  const handleAddNewNote = async (noteData: NotePayload) => {
+    try {
+      console.log('Received note data:', noteData);
+
+      const cleanNoteData: NotePayload = {
+        title: noteData.title,
+        body: noteData.body
+      };
+
+      console.log('Sending clean note data:', cleanNoteData);
+
+      const { data, error } = await addNote(cleanNoteData);
+
+      if (error || !data) {
+        console.error("Failed to add new note:", error);
+        return;
+      }
+
+      console.log("New note added successfully:", data);
+      // Add to single source of truth
+      setAllNotes(prevNotes => [...prevNotes, data]);
+      navigate('/');
+    } catch (err) {
+      console.error("Error adding new note:", err);
     }
   };
 
@@ -237,20 +295,23 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetchNotes();
+      fetchAllNotes();
     }
-  }, [isAuthenticated, fetchNotes]);
+  }, [isAuthenticated, fetchAllNotes]);
 
   if (isCheckingAuth) {
     return (
-      <div className="notes-app p-6 bg-gray-100 dark:bg-gray-900 min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <div className="text-gray-600 dark:text-gray-300">
-            Checking authentication...
+      <>
+        <NoteHeader user={null} onLogout={() => { }} isAuthenticated={false} />
+        <div className="notes-app p-6 bg-gray-100 dark:bg-gray-900 min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <div className="text-gray-600 dark:text-gray-300">
+              {t('message.checkingAuth')}
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -258,7 +319,7 @@ const App: React.FC = () => {
     <div className="App">
       {isAuthenticated ? (
         <AuthenticatedApp
-          notes={notes}
+          allNotes={allNotes}
           user={user}
           onDeleteNote={handleDeleteNote}
           onArchiveNote={handleArchiveNote}

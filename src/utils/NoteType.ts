@@ -6,4 +6,10 @@ type Note = {
     archived: boolean;
 };
 
-export type { Note };
+type NotePayload = {
+    title: string;
+    body: string;
+    archived?: boolean;
+};
+
+export type { Note, NotePayload };

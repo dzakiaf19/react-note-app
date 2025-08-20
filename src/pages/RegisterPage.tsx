@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../utils/network-data";
 import RegisterInput from "../components/RegisterInput";
+import { useApp } from "../context/AppContext";
 
 const RegisterPage: React.FC = () => {
     const [name, setName] = useState("");
@@ -10,6 +11,7 @@ const RegisterPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
+    const { t } = useApp();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -68,12 +70,12 @@ const RegisterPage: React.FC = () => {
                 />
 
                 <p className="text-sm text-center">
-                    Already have an account?{" "}
+                    {t('auth.alreadyHaveAccount')}{" "}
                     <Link
                         to="/"
                         className="font-medium text-blue-600 hover:text-blue-500 hover:underline"
                     >
-                        Log In here
+                        {t('auth.login')}
                     </Link>
                 </p>
             </div>

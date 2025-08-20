@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { login, putAccessToken } from "../utils/network-data";
 import { useNavigate } from "react-router-dom";
 import LoginInput from "../components/LoginInput";
+import { useApp } from "../context/AppContext";
 
 interface LoginPageProps {
     onLogin: (accessToken: string) => void;
@@ -14,11 +15,10 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
+    const { t } = useApp();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
-
-        // Clear previous errors when user starts typing
         if (error) setError(null);
 
         if (name === "email") setEmail(value);
@@ -73,12 +73,13 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
                 />
 
                 <p className="text-sm text-center">
-                    Don't have an account?{" "}
+                    {t('auth.noAccount')}
+                    {' '}
                     <Link
                         to="/register"
                         className="font-medium text-blue-600 hover:text-blue-500 hover:underline"
                     >
-                        Register here
+                        {t('auth.register')}
                     </Link>
                 </p>
             </div>

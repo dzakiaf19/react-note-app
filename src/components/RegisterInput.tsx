@@ -1,4 +1,5 @@
 import React from "react";
+import { useApp } from "../context/AppContext";
 
 interface RegisterInputProps {
     name: string;
@@ -19,13 +20,14 @@ const RegisterInput: React.FC<RegisterInputProps> = ({
     isLoading = false,
     error
 }) => {
+    const { t } = useApp();
     return (
         <form
             onSubmit={onSubmit}
             className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-sm space-y-4"
         >
             <h2 className="text-2xl font-semibold text-center text-gray-900 dark:text-white">
-                Register
+                {t('auth.register')}
             </h2>
 
             {error && (
@@ -40,7 +42,7 @@ const RegisterInput: React.FC<RegisterInputProps> = ({
                         htmlFor="name"
                         className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                     >
-                        Name
+                        {t('auth.name')}
                     </label>
                     <input
                         id="name"
@@ -48,7 +50,7 @@ const RegisterInput: React.FC<RegisterInputProps> = ({
                         name="name"
                         value={name}
                         onChange={onChange}
-                        placeholder="Enter your name"
+                        placeholder={t('auth.namePlaceholder')}
                         required
                         disabled={isLoading}
                         className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md 
@@ -64,7 +66,7 @@ const RegisterInput: React.FC<RegisterInputProps> = ({
                         htmlFor="email"
                         className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                     >
-                        Email Address
+                        {t('auth.email')}
                     </label>
                     <input
                         id="email"
@@ -72,7 +74,7 @@ const RegisterInput: React.FC<RegisterInputProps> = ({
                         name="email"
                         value={email}
                         onChange={onChange}
-                        placeholder="Enter your email"
+                        placeholder={t('auth.emailPlaceholder')}
                         required
                         disabled={isLoading}
                         className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md 
@@ -87,7 +89,7 @@ const RegisterInput: React.FC<RegisterInputProps> = ({
                         htmlFor="password"
                         className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                     >
-                        Password
+                        {t('auth.password')}
                     </label>
                     <input
                         id="password"
@@ -95,7 +97,7 @@ const RegisterInput: React.FC<RegisterInputProps> = ({
                         name="password"
                         value={password}
                         onChange={onChange}
-                        placeholder="Enter your password"
+                        placeholder={t('auth.passwordPlaceholder')}
                         required
                         disabled={isLoading}
                         className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md 
@@ -116,7 +118,7 @@ const RegisterInput: React.FC<RegisterInputProps> = ({
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                          dark:focus:ring-offset-gray-800"
             >
-                {isLoading ? "Registering..." : "Register"}
+                {isLoading ? "Registering..." : t('auth.registerButton')}
             </button>
         </form>
     );
