@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useApp } from "../context/AppContext";
 
 type BreadcrumbProps = {
     title?: string;
@@ -14,12 +15,14 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ title, isArchived = false }) =>
     const isArchivePage = pathParts.includes("archived");
     const isDetailPage = pathParts.includes("notes") && pathParts.length === 2;
 
+    const { t } = useApp();
+
     return (
         <nav className="text-sm text-gray-600 dark:text-gray-300 mb-4">
             <ul className="flex flex-wrap items-center space-x-2">
                 <li>
                     <Link to="/" className="hover:underline text-blue-600 dark:text-blue-400">
-                        Note
+                        {t('breadcrumb.notes')}
                     </Link>
                 </li>
 
@@ -28,7 +31,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ title, isArchived = false }) =>
                         <li>/</li>
                         <li>
                             <Link to="/archived" className="hover:underline text-blue-600 dark:text-blue-400">
-                                Archived
+                                {t('breadcrumb.archived')}
                             </Link>
                         </li>
                     </>
@@ -39,7 +42,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ title, isArchived = false }) =>
                         <li>/</li>
                         <li>
                             <Link to="/notes/new" className="hover:underline text-blue-600 dark:text-blue-400">
-                                Tambah Note
+                                {t('breadcrumb.addNote')}
                             </Link>
                         </li>
                     </>

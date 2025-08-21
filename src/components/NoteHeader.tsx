@@ -13,7 +13,7 @@ const NoteHeader: React.FC<NoteHeaderProps> = ({ onLogout, user, isAuthenticated
     const { t } = useApp();
 
     return (
-        <header className="text-white p-4 shadow-md flex items-center justify-between bg-gray-800 dark:bg-gray-900">
+        <header className="text-white p-4 shadow-md flex items-center justify-between bg-gray-500 dark:bg-gray-900">
             <h1 className="text-2xl font-bold text-white dark:text-gray-100">
                 {t('notes.title')}
             </h1>

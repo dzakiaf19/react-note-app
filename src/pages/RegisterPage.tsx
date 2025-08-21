@@ -40,12 +40,12 @@ const RegisterPage: React.FC = () => {
             if (!registerError && data) {
                 navigate("/login");
             } else {
-                setError("Registration failed. Please try again.");
+                setError(t('auth.registerFailed') || 'Registration failed');
                 console.error("Registration error:", registerError);
             }
         } catch (err) {
             console.error("Registration error:", err);
-            setError("Something went wrong. Please try again.");
+            setError(t('auth.registerError') || 'Something went wrong. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -75,7 +75,7 @@ const RegisterPage: React.FC = () => {
                         to="/"
                         className="font-medium text-blue-600 hover:text-blue-500 hover:underline"
                     >
-                        {t('auth.login')}
+                        {t('auth.loginHere')}
                     </Link>
                 </p>
             </div>

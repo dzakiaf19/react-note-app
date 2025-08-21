@@ -20,11 +20,15 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
         'nav.logout': 'Keluar',
         'nav.profile': 'Profil',
 
+        // breadcrumb
+        'breadcrumb.notes': 'Catatan',
+        'breadcrumb.archived': 'Terarsip',
+        'breadcrumb.addNote': 'Tambah Catatan',
+
         // Authentication
         'auth.welcome': 'Selamat Datang di Aplikasi Catatan',
         'auth.subtitle': 'Silakan masuk atau daftar untuk melanjutkan',
         'auth.login': 'Masuk',
-        'auth.loginLoading': 'Sedang masuk...',
         'auth.noAccount': 'Belum punya akun?',
         'auth.register': 'Daftar',
         'auth.email': 'Email',
@@ -33,19 +37,13 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
         'auth.passwordPlaceholder': 'Masukkan kata sandi Anda',
         'auth.name': 'Nama',
         'auth.namePlaceholder': 'Masukkan nama Anda',
-        'auth.confirmPassword': 'Konfirmasi Kata Sandi',
         'auth.loginButton': 'Masuk',
         'auth.registerButton': 'Daftar',
-        'auth.dontHaveAccount': 'Belum punya akun?',
         'auth.alreadyHaveAccount': 'Sudah punya akun?',
         'auth.registerHere': 'Daftar di sini',
         'auth.loginHere': 'Masuk di sini',
-        'auth.loginSuccess': 'Berhasil masuk!',
-        'auth.registerSuccess': 'Pendaftaran berhasil! Silakan masuk dengan akun Anda.',
         'auth.loginFailed': 'Email atau kata sandi salah',
         'auth.registerFailed': 'Pendaftaran gagal. Silakan coba lagi.',
-        'auth.allFieldsRequired': 'Semua kolom wajib diisi',
-        'auth.emailPasswordRequired': 'Email dan kata sandi wajib diisi',
 
         // Notes
         'notes.title': 'Catatan Pribadi',
@@ -64,14 +62,13 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
         'notes.archivedNotes': 'Catatan Terarsip',
         'notes.activeNotes': 'Catatan Aktif',
         'notes.noNotesFound': 'Tidak ada catatan yang ditemukan',
+        'notes.noArchivedNotes': 'Tidak ada catatan terarsip',
 
         // Add Note Page
         'addNote.title': 'Tambah Catatan Baru',
         'addNote.description': 'Buat catatan baru untuk menyimpan ide, pemikiran, atau informasi penting Anda.',
         'addNote.titlePlaceholder': 'Masukkan judul catatan...',
         'addNote.bodyPlaceholder': 'Tulis isi catatan di sini...',
-        'addNote.success': 'Catatan berhasil ditambahkan!',
-        'addNote.failed': 'Gagal menambahkan catatan. Silakan coba lagi.',
 
         // Messages
         'message.loading': 'Memuat...',
@@ -84,13 +81,10 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
         // Buttons
         'button.goBack': 'Kembali',
         'button.backToHome': 'Kembali ke Beranda',
-        'button.tryAgain': 'Coba Lagi',
 
         // Errors
-        'error.noteNotFound': 'Catatan tidak ditemukan',
-        'error.invalidNoteId': 'ID catatan tidak valid',
-        'error.loadNote': 'Gagal memuat catatan',
-        'error.pageNotFound': 'Halaman tidak ditemukan',
+        'error.pageNotFound': '404 - Halaman tidak ditemukan',
+        'error.bodyPageNotFound': 'Halaman yang Anda cari tidak ada',
     },
     en: {
         // Navigation & Header
@@ -100,11 +94,15 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
         'nav.logout': 'Logout',
         'nav.profile': 'Profile',
 
+        // breadcrumb
+        'breadcrumb.notes': 'Notes',
+        'breadcrumb.archived': 'Archived',
+        'breadcrumb.addNote': 'Add Note',
+
         // Authentication
         'auth.welcome': 'Welcome to the Note App',
         'auth.subtitle': 'Please log in or register to continue',
         'auth.login': 'Login',
-        'auth.loginLoading': 'Logging in...',
         'auth.noAccount': 'Don\'t have an account?',
         'auth.register': 'Register',
         'auth.email': 'Email',
@@ -113,19 +111,13 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
         'auth.passwordPlaceholder': 'Enter your password',
         'auth.name': 'Name',
         'auth.namePlaceholder': 'Enter your name',
-        'auth.confirmPassword': 'Confirm Password',
         'auth.loginButton': 'Login',
         'auth.registerButton': 'Register',
-        'auth.dontHaveAccount': "Don't have an account?",
         'auth.alreadyHaveAccount': "Already have an account?",
         'auth.registerHere': 'Register here',
         'auth.loginHere': 'Login here',
-        'auth.loginSuccess': 'Login successful!',
-        'auth.registerSuccess': "Registration successful! Please log in with your account.",
         'auth.loginFailed': "Incorrect email or password",
         'auth.registerFailed': "Registration failed. Please try again.",
-        'auth.allFieldsRequired': "All fields are required",
-        'auth.emailPasswordRequired': "Email and password are required",
 
         // Notes
         'notes.title': "Personal Notes",
@@ -144,6 +136,7 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
         'notes.archivedNotes': "Archived Notes",
         'notes.activeNotes': "Active Notes",
         'notes.noNotesFound': "No notes found",
+        'notes.noArchivedNotes': "No archived notes",
 
         // Add Note Page
         'addNote.title': "Add New Note",
@@ -151,8 +144,6 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
             "Create a new note to save your ideas, thoughts, or important information.",
         'addNote.titlePlaceholder': "Enter note title...",
         'addNote.bodyPlaceholder': "Write the note content here...",
-        'addNote.success': 'Note added successfully!',
-        'addNote.failed': 'Failed to add note. Please try again.',
 
         // Messages
         'message.loading': 'Loading...',
@@ -165,13 +156,10 @@ const locale: Record<LanguageType, { [key: string]: string }> = {
         // Buttons
         'button.goBack': 'Back',
         'button.backToHome': 'Back to Home',
-        'button.tryAgain': 'Try Again',
 
         // Errors
-        'error.noteNotFound': 'Note not found',
-        'error.invalidNoteId': 'Invalid note ID',
-        'error.loadNote': 'Failed to load note',
-        'error.pageNotFound': 'Page not found',
+        'error.pageNotFound': '404 - Page not found',
+        'error.bodyPageNotFound': 'The page you are looking for does not exist',
     }
 }
 

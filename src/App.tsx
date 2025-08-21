@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
-import { getUserLogged, getAccessToken, getActiveNotes, getArchivedNotes, deleteNote, archiveNote, unarchiveNote, addNote, type NotePayload } from './utils/network-data';
+import { getUserLogged, getAccessToken, getActiveNotes, getArchivedNotes, deleteNote, archiveNote, unarchiveNote } from './utils/network-data';
 import { useApp } from './context/AppContext';
 import type { Note } from './utils/NoteType';
 import NoteHeader from './components/NoteHeader';
@@ -24,7 +24,7 @@ const AuthenticatedApp: React.FC<{
   onDeleteNote: (id: string) => void;
   onArchiveNote: (id: string) => void;
   onUnarchiveNote: (id: string) => void;
-  onAddNewNote: (note: NotePayload) => void;
+  onAddNewNote: (note: Note) => void;
   handleLogout: () => void;
 }> = ({ allNotes, user, onDeleteNote, onArchiveNote, onUnarchiveNote, handleLogout, onAddNewNote }) => {
   const activeNotes = allNotes.filter(note => !note.archived);
@@ -227,31 +227,20 @@ const App: React.FC = () => {
     }
   };
 
-  const handleAddNewNote = async (noteData: NotePayload) => {
-    try {
-      console.log('Received note data:', noteData);
+  const handleAddNewNote = async (newNote: Note) => { // ← Terima Note, bukan NotePayload
+    console.log("New note added successfully:", newNote);
 
-      const cleanNoteData: NotePayload = {
-        title: noteData.title,
-        body: noteData.body
-      };
-
-      console.log('Sending clean note data:', cleanNoteData);
-
-      const { data, error } = await addNote(cleanNoteData);
-
-      if (error || !data) {
-        console.error("Failed to add new note:", error);
-        return;
+    // Langsung tambahkan ke state, tidak perlu API call lagi
+    setAllNotes(prevNotes => {
+      const exists = prevNotes.find(note => note.id === newNote.id);
+      if (exists) {
+        console.warn('Note already exists, skipping add');
+        return prevNotes;
       }
+      return [...prevNotes, newNote];
+    });
 
-      console.log("New note added successfully:", data);
-      // Add to single source of truth
-      setAllNotes(prevNotes => [...prevNotes, data]);
-      navigate('/');
-    } catch (err) {
-      console.error("Error adding new note:", err);
-    }
+    // navigate('/'); ← Hapus ini, biar AddNewNotePage yang handle
   };
 
   useEffect(() => {

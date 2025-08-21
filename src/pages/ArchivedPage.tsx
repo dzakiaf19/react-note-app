@@ -4,6 +4,7 @@ import NoteList from "../components/NoteList";
 import Breadcrumb from "../components/BreadCrumb";
 import SearchBar from "../components/SearchBar";
 import { useSearchParams } from "react-router-dom";
+import { useApp } from "../context/AppContext";
 
 type ArchivedPageProps = {
     notes: Note[];
@@ -18,6 +19,7 @@ const ArchivedPage: React.FC<ArchivedPageProps> = ({
 }) => {
     const [searchParams] = useSearchParams();
     const keyword = searchParams.get('keyword') || '';
+    const { t } = useApp();
 
     const archivedNotes = notes
         .filter(note =>
@@ -29,8 +31,8 @@ const ArchivedPage: React.FC<ArchivedPageProps> = ({
         <div className="container mx-auto p-4">
             <Breadcrumb />
             <SearchBar />
-            <h1 className="text-2xl font-bold mb-4">Catatan Terarsip</h1>
-            {notes.length > 0 ? (
+            <h1 className="text-2xl font-bold mb-4">{t('notes.archivedNotes')}</h1>
+            {archivedNotes.length > 0 ? (
                 <NoteList
                     notes={archivedNotes}
                     onArchive={() => { }}
@@ -39,7 +41,7 @@ const ArchivedPage: React.FC<ArchivedPageProps> = ({
                 />
             ) : (
                 <p className="text-center text-gray-500 dark:text-gray-400 mt-8">
-                    Tidak ada catatan terarsip.
+                    {t('notes.noArchivedNotes')}
                 </p>
             )}
         </div>

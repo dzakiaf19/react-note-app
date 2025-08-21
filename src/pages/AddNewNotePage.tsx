@@ -4,6 +4,7 @@ import { addNote } from "../utils/network-data";
 import type { NotePayload } from "../utils/network-data";
 import type { Note } from "../utils/NoteType";
 import NoteAddForm from "../components/NoteAddForm";
+import Breadcrumb from "../components/BreadCrumb";
 import { useApp } from "../context/AppContext";
 
 type AddNewNotePageProps = {
@@ -43,6 +44,7 @@ const AddNewNotePage: React.FC<AddNewNotePageProps> = ({ onNoteAdded }) => {
 
     return (
         <div className="container mx-auto p-4 max-w-2xl">
+            <Breadcrumb />
             <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white">

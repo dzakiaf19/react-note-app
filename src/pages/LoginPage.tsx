@@ -44,7 +44,7 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
                 onLogin(data.accessToken);
                 navigate("/");
             } else {
-                setError("Invalid email or password");
+                setError(t('auth.loginFailed') || 'Login failed. Please try again.');
                 console.error("Login failed:", loginError);
             }
         } catch (err) {
@@ -79,7 +79,7 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
                         to="/register"
                         className="font-medium text-blue-600 hover:text-blue-500 hover:underline"
                     >
-                        {t('auth.register')}
+                        {t('auth.registerHere')}
                     </Link>
                 </p>
             </div>
